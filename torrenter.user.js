@@ -3,6 +3,7 @@
 // @namespace    http://www.google.com/search?q=mabakay
 // @version      1.50
 // @description  Adds links to torrent sites on popular movie websites.
+// @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2018, mabakay
 // @date         25 march 2018
