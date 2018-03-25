@@ -7,7 +7,7 @@
 // @author       mabakay
 // @copyright    2010 - 2018, mabakay
 // @date         25 march 2018
-// @license      GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
+// @license      GPL-3.0
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
 // @updateURL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter.user.js
