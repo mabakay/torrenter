@@ -1,16 +1,15 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.50
+// @version      1.51
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2018, mabakay
-// @date         25 march 2018
+// @date         22 december 2018
 // @license      GPL-3.0
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
-// @updateURL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter.user.js
 // @supportURL   https://github.com/mabakay/torrenter
 // @match        http://www.filmweb.pl/*
 // @match        https://www.filmweb.pl/*
@@ -160,7 +159,7 @@
 
     function processImdb() {
         var style = "margin-top: 0.5em; font-size: 0.7em;";
-        var titleElement = document.querySelector("div.title_block h1[itemprop=name]");
+        var titleElement = document.querySelector("div.title_block h1");
         var title,
             hasSmallTitle = false;
 
