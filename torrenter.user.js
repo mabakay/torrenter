@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.51
+// @version      1.52
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2018, mabakay
-// @date         22 december 2018
+// @date         30 december 2018
 // @license      GPL-3.0
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -24,7 +24,7 @@
     'use strict';
 
     var engines = [
-        "https://thepiratebay.org/search/{0}/0/7/0",
+        "https://tpbproxyone.org/search/{0}/0/7/0",
         "https://rarbgmirror.org/torrents.php?search={0}&order=seeders&by=DESC",
         "http://1337x.to/search/{0}/1/",
         "https://torrentz2.eu/search?f={0}",
