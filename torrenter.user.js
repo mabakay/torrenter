@@ -11,6 +11,8 @@
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
 // @supportURL   https://github.com/mabakay/torrenter
+// @updateURL    https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
+// @downloadURL  https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
 // @match        http://www.filmweb.pl/*
 // @match        https://www.filmweb.pl/*
 // @match        http://release24.pl/*
