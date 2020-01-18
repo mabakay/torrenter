@@ -1,18 +1,16 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.53
+// @version      1.61
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
-// @copyright    2010 - 2019, mabakay
-// @date         05 december 2019
+// @copyright    2010 - 2020, mabakay
+// @date         18 january 2020
 // @license      GPL-3.0
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
 // @supportURL   https://github.com/mabakay/torrenter
-// @updateURL    https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
-// @downloadURL  https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
 // @match        http://www.filmweb.pl/*
 // @match        https://www.filmweb.pl/*
 // @match        http://release24.pl/*
@@ -22,7 +20,7 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
     var engines = [
@@ -53,7 +51,7 @@
             break;
     }
 
-    function createLinkSpan(tag, title, style) {
+    function createLinkSpan(tag, title, style, itemStyle) {
         var span = document.createElement(tag);
         span.setAttribute("id", "Torrenter");
         span.setAttribute("style", style);
@@ -61,7 +59,10 @@
         for (var i = 0; i < engines.length; i++) {
             var link = document.createElement("a");
             link.setAttribute("href", format(engines[i], encodeURIComponent(title)));
-            link.setAttribute("style", "position: relative; top: 5px;");
+
+            if (itemStyle) {
+                link.setAttribute("style", itemStyle);
+            }
 
             var urlRegex = /(https?:\/\/)(.+?)\//;
             var regexResult = engines[i].match(urlRegex);
@@ -114,7 +115,7 @@
                         title += " " + match[3];
                     }
 
-                    var span = createLinkSpan("span", title, "margin-left: 3em; font-weight: normal;");
+                    var span = createLinkSpan("span", title, "margin-left: 3em; font-weight: normal;", "position: relative; top: 5px;");
 
                     elem.children[2].children[0].children[0].children[0].children[0].children[1].children[0].children[0].children[0].appendChild(
                         span
@@ -125,26 +126,20 @@
     }
 
     function processFilmweb() {
-        var style = "margin-top: 0.5em; font-size: 0.7em;";
-        var titleElement = document.querySelector(".filmMainHeader .hdr");
-        var title,
-            hasSmallTitle = false;
+        var titleElement = document.querySelector(".filmCoverSection__title a");
+        var title;
 
         if (titleElement) {
-            var smallTitleElement = document.querySelector(".filmMainHeader .cap.s-16");
+            var smallTitleElement = document.querySelector(".filmCoverSection__orginalTitle");
 
             if (smallTitleElement) {
-                style = "margin-left: 1.5em; font-size: 0.7em;";
-                titleElement = smallTitleElement;
-                hasSmallTitle = true;
-
                 title = smallTitleElement.innerText;
             } else {
-                title = document.querySelector(".filmMainHeader .hdr a").innerText;
+                title = document.querySelector(".filmCoverSection__title a").innerText;
             }
 
-            var year = document.querySelector(".filmMainHeader .hdr .filmTitle").childNodes[2].innerText;
-            var yearRegexp = /\(([0-9]{4})\)/;
+            var year = document.querySelector(".filmCoverSection__year").innerText;
+            var yearRegexp = /([0-9]{4})/;
             var match = year.match(yearRegexp);
 
             if (match != null) {
@@ -152,20 +147,17 @@
             }
         }
 
-        if (titleElement && title) {
-            if (hasSmallTitle) {
-                titleElement.appendChild(createLinkSpan("span", title, style));
-            } else {
-                titleElement.parentElement.appendChild(createLinkSpan("div", title, style));
-            }
+        var headerElement = document.querySelector('.filmCoverSection__type');
+        if (headerElement && title) {
+            headerElement.appendChild(createLinkSpan("span", title, "margin-left: 1em; font-size: 0.7em; display: inline-flex;", "position: relative; top: 2px;"), titleElement.nextSibling);
         }
     }
 
     function processImdb() {
         var style = "margin-top: 0.5em; font-size: 0.7em;";
         var titleElement = document.querySelector("div.title_block h1");
-        var title,
-            hasSmallTitle = false;
+        var title;
+        var hasSmallTitle = false;
 
         if (titleElement) {
             var smallTitleElement = document.querySelector("div.title_block div.originalTitle");
