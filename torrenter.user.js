@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.62
+// @version      1.63
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2021, mabakay
 // @date         06 October 2021
-// @license      GPL-3.0
+// @license      MIT
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
 // @supportURL   https://github.com/mabakay/torrenter
