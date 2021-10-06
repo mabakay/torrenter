@@ -1,16 +1,18 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.61
+// @version      1.62
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
-// @copyright    2010 - 2020, mabakay
-// @date         18 january 2020
+// @copyright    2010 - 2021, mabakay
+// @date         06 October 2021
 // @license      GPL-3.0
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
 // @supportURL   https://github.com/mabakay/torrenter
+// @updateURL    https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
+// @downloadURL  https://github.com/mabakay/torrenter/raw/master/torrenter.user.js
 // @match        http://www.filmweb.pl/*
 // @match        https://www.filmweb.pl/*
 // @match        http://release24.pl/*
@@ -24,31 +26,35 @@
     'use strict';
 
     var engines = [
-        "https://proxthepirate.info//search/{0}/0/7/0",
-        "https://rarbgmirror.org/torrents.php?search={0}&order=seeders&by=DESC",
+        "https://thepiratebay10.org/search/{0}/0/7/0",
+        "https://rarbg.to/torrents.php?search={0}&order=seeders&by=DESC",
         "http://1337x.to/search/{0}/1/",
-        "https://torrentz2.eu/search?f={0}",
-        "https://yts.am/browse-movies/{0}/all/all/0/seeds",
-        "https://eztv.ag/search/{0}",
-        "https://www.limetorrents.cc/search/all/{0}/seeds/1/",
+        "https://torrentz2eu.org/index.html?q={0}",
+        "https://yts.mx/browse-movies/{0}/all/all/0/seeds/0/all",
+        "https://eztv.re/search/{0}",
         "https://zooqle.com/search?q={0}&s=ns&v=t&sd=d",
-        "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={0}"
+        "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={0}",
+        "https://www.limetorrents.pro/search/all/{0}/seeds/1/"
     ];
 
     var hostName = window.location.hostname;
 
-    switch (hostName) {
-        case "release24.pl":
-            processRelease24();
-            break;
+    setTimeout(function() { processSite(hostName); }, 250);
 
-        case "www.filmweb.pl":
-            processFilmweb();
-            break;
+    function processSite(hostName) {
+        switch (hostName) {
+            case "release24.pl":
+                processRelease24();
+                break;
 
-        case "www.imdb.com":
-            processImdb();
-            break;
+            case "www.filmweb.pl":
+                processFilmweb();
+                break;
+
+            case "www.imdb.com":
+                processImdb();
+                break;
+        }
     }
 
     function createLinkSpan(tag, title, style, itemStyle) {
@@ -126,7 +132,7 @@
     }
 
     function processFilmweb() {
-        var titleElement = document.querySelector(".filmCoverSection__title a");
+        var titleElement = document.querySelector(".filmCoverSection__title span");
         var title;
 
         if (titleElement) {
@@ -135,7 +141,7 @@
             if (smallTitleElement) {
                 title = smallTitleElement.innerText;
             } else {
-                title = document.querySelector(".filmCoverSection__title a").innerText;
+                title = document.querySelector(".filmCoverSection__title span").innerText;
             }
 
             var year = document.querySelector(".filmCoverSection__year").innerText;
@@ -155,12 +161,12 @@
 
     function processImdb() {
         var style = "margin-top: 0.5em; font-size: 0.7em;";
-        var titleElement = document.querySelector("div.title_block h1");
+        var titleElement = document.querySelector('[class*="TitleHeader__TitleText"]')
         var title;
         var hasSmallTitle = false;
 
         if (titleElement) {
-            var smallTitleElement = document.querySelector("div.title_block div.originalTitle");
+            var smallTitleElement = document.querySelector('[class*="OriginalTitle__OriginalTitle"]')
 
             if (smallTitleElement) {
                 style = "margin-left: 1.5em; font-size: 0.7em; margin-bottom: 0.5em; display: inline-block;";
@@ -168,14 +174,22 @@
                 hasSmallTitle = true;
 
                 title = smallTitleElement.childNodes[0].nodeValue;
+
+                // Remove "Original title" prefix
+                var titleRegexp = /Original title: (.*)|.*/;
+                var titleMatch = title.match(titleRegexp);
+
+                if (titleMatch != null) {
+                    title = titleMatch[1];
+                }
             } else {
                 title = titleElement.childNodes[0].nodeValue;
             }
 
-            var yearElement = document.querySelector("#titleYear");
+            var yearElement = document.querySelector('[class*="TitleBlockMetaData__ListItemText"]')
             if (yearElement) {
                 var year = yearElement.textContent;
-                var yearRegexp = /\(([0-9]{4})\)/;
+                var yearRegexp = /([0-9]{4})/;
                 var match = year.match(yearRegexp);
 
                 if (match != null) {
