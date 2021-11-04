@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.63
+// @version      1.70
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2021, mabakay
-// @date         06 October 2021
+// @date         04 November 2021
 // @license      MIT
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -19,6 +19,8 @@
 // @match        https://release24.pl/*
 // @match        http://www.imdb.com/*
 // @match        https://www.imdb.com/*
+// @match        http://www.rottentomatoes.com/*
+// @match        https://www.rottentomatoes.com/*
 // @grant        none
 // ==/UserScript==
 
@@ -53,6 +55,10 @@
 
             case "www.imdb.com":
                 processImdb();
+                break;
+
+            case "www.rottentomatoes.com":
+                processRottenTomatoes();
                 break;
         }
     }
@@ -141,7 +147,7 @@
             if (smallTitleElement) {
                 title = smallTitleElement.innerText;
             } else {
-                title = document.querySelector(".filmCoverSection__title span").innerText;
+                title = titleElement.innerText;
             }
 
             var year = document.querySelector(".filmCoverSection__year").innerText;
@@ -204,6 +210,28 @@
             } else {
                 titleElement.parentElement.appendChild(createLinkSpan("div", title, style));
             }
+        }
+    }
+
+    function processRottenTomatoes() {
+        var titleElement = document.querySelector(".scoreboard__title");
+        var title;
+
+        if (titleElement) {
+            title = titleElement.innerText;
+
+            var year = document.querySelector(".scoreboard__info").innerText;
+            var yearRegexp = /([0-9]{4})/;
+            var match = year.match(yearRegexp);
+
+            if (match != null) {
+                title += " " + match[1];
+            }
+        }
+
+        var headerElement = document.querySelector('.scoreboard__title');
+        if (headerElement && title) {
+            headerElement.appendChild(createLinkSpan("span", title, "margin-left: 1em;font-size: 0.5em;position: relative;top: -7px;", "position: relative; top: 2px;"));
         }
     }
 })();
