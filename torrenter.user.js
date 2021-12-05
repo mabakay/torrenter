@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Torrenter
 // @namespace    http://www.google.com/search?q=mabakay
-// @version      1.70
+// @version      1.71
 // @description  Adds links to torrent sites on popular movie websites.
 // @description:pl-PL Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author       mabakay
 // @copyright    2010 - 2021, mabakay
-// @date         04 November 2021
+// @date         05 December 2021
 // @license      MIT
 // @run-at       document-end
 // @icon64URL    https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -161,7 +161,7 @@
 
         var headerElement = document.querySelector('.filmCoverSection__type');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, "margin-left: 1em; font-size: 0.7em; display: inline-flex;", "position: relative; top: 2px;"), titleElement.nextSibling);
+            headerElement.appendChild(createLinkSpan("span", title, "margin-left: 1em; font-size: 0.7em; display: inline-flex;", "position: relative; top: 2px; z-index: 1;"), titleElement.nextSibling);
         }
     }
 
