@@ -1,12 +1,12 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.0.0
+// @version        2.1.0
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
-// @copyright      2010 - 2021, mabakay
-// @date           04 November 2021
+// @copyright      2010 - 2022, mabakay
+// @date           27 March 2022
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -277,7 +277,7 @@ class Torrenter {
 
     private static processRelease24(createLinkSpan: CreateLinkSpanFunction): void {
         let titleElement = document.getElementById("mainwindow");
-        let loopCount = titleElement.childElementCount > 3 ? titleElement.childElementCount - 3 : 2;
+        let loopCount = titleElement.childElementCount;
 
         for (let i = 1; i < loopCount; i++) {
             let elem = titleElement.children[i];
@@ -303,12 +303,12 @@ class Torrenter {
     }
 
     private static processFilmweb(createLinkSpan: CreateLinkSpanFunction): void {
-        let titleElement = document.querySelector(".filmCoverSection__title span");
+        let titleElement = document.querySelector(".fP__title");
         let title;
         let titleYear;
 
         if (titleElement) {
-            let smallTitleElement = document.querySelector(".filmCoverSection__orginalTitle");
+            let smallTitleElement = document.querySelector(".fP__originalTitle");
 
             if (smallTitleElement) {
                 title = smallTitleElement.textContent;
@@ -316,7 +316,7 @@ class Torrenter {
                 title = titleElement.textContent;
             }
 
-            let year = document.querySelector(".filmCoverSection__year").textContent;
+            let year = document.querySelector(".fP__year").textContent;
             let yearRegexp = /([0-9]{4})/;
             let match = year.match(yearRegexp);
 
@@ -325,27 +325,22 @@ class Torrenter {
             }
         }
 
-        let headerElement = document.querySelector('.filmCoverSection__type');
+        let headerElement = document.querySelector('.fP__titleDetails');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em; display: inline-flex;", "position: relative; top: 2px; z-index: 1;"));
+            headerElement.appendChild(createLinkSpan("span", title, titleYear, "display: inline-flex;", "position: relative; top: 2px; z-index: 1;"));
         }
     }
 
     private static processImdb(createLinkSpan: CreateLinkSpanFunction): void {
-        let style = "margin-top: 0.5em;";
-        let titleElement = document.querySelector('[class*="TitleHeader__TitleText"]')
+        let titleElement = document.querySelector('[data-testid*="block__title"]')
         let title;
         let titleYear;
-        let hasSmallTitle = false;
 
         if (titleElement) {
-            let smallTitleElement = document.querySelector('[class*="OriginalTitle__OriginalTitle"]')
+            let smallTitleElement = document.querySelector('[data-testid*="original-title"]')
 
             if (smallTitleElement) {
-                style = "margin-left: 1em; display: inline-block;";
                 titleElement = smallTitleElement;
-                hasSmallTitle = true;
-
                 title = smallTitleElement.childNodes[0].nodeValue;
 
                 // Remove "Original title" prefix
@@ -359,7 +354,7 @@ class Torrenter {
                 title = titleElement.childNodes[0].nodeValue;
             }
 
-            let yearElement = document.querySelector('[class*="TitleBlockMetaData__ListItemText"]')
+            let yearElement = document.querySelector('[class*="ipc-inline-list__item"] span')
             if (yearElement) {
                 let year = yearElement.textContent;
                 let yearRegexp = /([0-9]{4})/;
@@ -371,12 +366,9 @@ class Torrenter {
             }
         }
 
-        if (titleElement && title) {
-            if (hasSmallTitle) {
-                titleElement.appendChild(createLinkSpan("span", title, titleYear, style));
-            } else {
-                titleElement.parentElement.appendChild(createLinkSpan("div", title, titleYear, style));
-            }
+        let headerElement = document.querySelector('[data-testid*="block__metadata"]')
+        if (headerElement && title) {
+            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em; display: inline-block;"));
         }
     }
 

@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.0.0
+// @version        2.1.0
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
-// @copyright      2010 - 2021, mabakay
-// @date           04 November 2021
+// @copyright      2010 - 2022, mabakay
+// @date           27 March 2022
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -237,7 +237,7 @@ var Torrenter = /** @class */ (function () {
     };
     Torrenter.processRelease24 = function (createLinkSpan) {
         var titleElement = document.getElementById("mainwindow");
-        var loopCount = titleElement.childElementCount > 3 ? titleElement.childElementCount - 3 : 2;
+        var loopCount = titleElement.childElementCount;
         for (var i = 1; i < loopCount; i++) {
             var elem = titleElement.children[i];
             if (elem.className === "wpis") {
@@ -256,41 +256,37 @@ var Torrenter = /** @class */ (function () {
         }
     };
     Torrenter.processFilmweb = function (createLinkSpan) {
-        var titleElement = document.querySelector(".filmCoverSection__title span");
+        var titleElement = document.querySelector(".fP__title");
         var title;
         var titleYear;
         if (titleElement) {
-            var smallTitleElement = document.querySelector(".filmCoverSection__orginalTitle");
+            var smallTitleElement = document.querySelector(".fP__originalTitle");
             if (smallTitleElement) {
                 title = smallTitleElement.textContent;
             }
             else {
                 title = titleElement.textContent;
             }
-            var year = document.querySelector(".filmCoverSection__year").textContent;
+            var year = document.querySelector(".fP__year").textContent;
             var yearRegexp = /([0-9]{4})/;
             var match = year.match(yearRegexp);
             if (match != null) {
                 titleYear = match[1];
             }
         }
-        var headerElement = document.querySelector('.filmCoverSection__type');
+        var headerElement = document.querySelector('.fP__titleDetails');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em; display: inline-flex;", "position: relative; top: 2px; z-index: 1;"));
+            headerElement.appendChild(createLinkSpan("span", title, titleYear, "display: inline-flex;", "position: relative; top: 2px; z-index: 1;"));
         }
     };
     Torrenter.processImdb = function (createLinkSpan) {
-        var style = "margin-top: 0.5em;";
-        var titleElement = document.querySelector('[class*="TitleHeader__TitleText"]');
+        var titleElement = document.querySelector('[data-testid*="block__title"]');
         var title;
         var titleYear;
-        var hasSmallTitle = false;
         if (titleElement) {
-            var smallTitleElement = document.querySelector('[class*="OriginalTitle__OriginalTitle"]');
+            var smallTitleElement = document.querySelector('[data-testid*="original-title"]');
             if (smallTitleElement) {
-                style = "margin-left: 1em; display: inline-block;";
                 titleElement = smallTitleElement;
-                hasSmallTitle = true;
                 title = smallTitleElement.childNodes[0].nodeValue;
                 // Remove "Original title" prefix
                 var titleRegexp = /Original title: (.*)|.*/;
@@ -302,7 +298,7 @@ var Torrenter = /** @class */ (function () {
             else {
                 title = titleElement.childNodes[0].nodeValue;
             }
-            var yearElement = document.querySelector('[class*="TitleBlockMetaData__ListItemText"]');
+            var yearElement = document.querySelector('[class*="ipc-inline-list__item"] span');
             if (yearElement) {
                 var year = yearElement.textContent;
                 var yearRegexp = /([0-9]{4})/;
@@ -312,13 +308,9 @@ var Torrenter = /** @class */ (function () {
                 }
             }
         }
-        if (titleElement && title) {
-            if (hasSmallTitle) {
-                titleElement.appendChild(createLinkSpan("span", title, titleYear, style));
-            }
-            else {
-                titleElement.parentElement.appendChild(createLinkSpan("div", title, titleYear, style));
-            }
+        var headerElement = document.querySelector('[data-testid*="block__metadata"]');
+        if (headerElement && title) {
+            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em; display: inline-block;"));
         }
     };
     Torrenter.processRottenTomatoes = function (createLinkSpan) {
