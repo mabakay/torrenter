@@ -110,7 +110,7 @@ class TorrenterConfigurator {
                 "https://torrentz2eu.org/index.html?q={title} {year}",
                 "https://yts.mx/browse-movies/{title}/all/all/0/seeds/{year}/all",
                 "https://eztv.re/search/{title} {year}",
-                "https://zooqle.com/search?q={title} {year}&s=ns&v=t&sd=d",
+                "https://www.torlock.com/?q={title} {year}&sort=seeds&order=desc",
                 "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title} {year}",
                 "https://www.limetorrents.pro/search/all/{title} {year}/seeds/1/"
             ],
