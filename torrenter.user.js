@@ -119,15 +119,15 @@ var TorrenterConfigurator = /** @class */ (function () {
     TorrenterConfigurator.prototype.getConfiguration = function () {
         return {
             engines: [
-                "https://thepiratebay10.org/search/{title} {year}/0/7/0",
-                "https://rarbg.to/torrents.php?search={title} {year}&order=seeders&by=DESC[&imdb={imdb}]",
-                "https://1337x.to/sort-search/{title} {year}/seeders/desc/1/",
-                "https://torrentz2eu.org/index.html?q={title} {year}",
-                "https://yts.mx/browse-movies/{title}/all/all/0/seeds/{year}/all",
-                "https://eztv.re/search/{title} {year}",
-                "https://www.torlock.com/?q={title} {year}&sort=seeds&order=desc",
-                "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title} {year}",
-                "https://www.limetorrents.pro/search/all/{title} {year}/seeds/1/"
+                "https://thepiratebay10.org/search/{title}[ {year}]/0/7/0",
+                "https://rarbg.to/torrents.php?search={title}[ {year}]&order=seeders&by=DESC[&imdb={imdb}]",
+                "https://1337x.to/sort-search/{title}[ {year}]/seeders/desc/1/",
+                "https://torrentz2eu.org/index.html?q={title}[ {year}]",
+                "https://yts.mx/browse-movies/{title}[/all/all/0/seeds/{year}/all]",
+                "https://eztv.re/search/{title}[ {year}]",
+                "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
+                "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title}[ {year}]",
+                "https://www.limetorrents.pro/search/all/{title}[ {year}]/seeds/1/"
             ],
             showEngines: this.getConfigurationProperty("showEngines", true),
             showUserEngines: this.getConfigurationProperty("showUserEngines", false),
@@ -235,7 +235,7 @@ var Torrenter = /** @class */ (function () {
     Torrenter.format = function (str, args) {
         return str.replace(/(?:\[[^{}]*?)?{(\w+)}(?:[^{}]*?\])?/g, function (text, placeholder) {
             if (text[0] == "[" && text[text.length - 1] == "]") {
-                return args.hasOwnProperty(placeholder) ? text.substring(1, text.length - 1).replace("{" + placeholder + "}", encodeURIComponent(args[placeholder])) : "";
+                return args.hasOwnProperty(placeholder) && args[placeholder] != null ? text.substring(1, text.length - 1).replace("{" + placeholder + "}", encodeURIComponent(args[placeholder])) : "";
             }
             else {
                 return args.hasOwnProperty(placeholder) ? encodeURIComponent(args[placeholder]) : text;
