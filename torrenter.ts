@@ -268,7 +268,7 @@ class Torrenter {
     }
 
     private static getFavIconImg(url: string): string {
-        return '<img src="http://www.google.com/s2/favicons?domain=' + url + '" width="16px" height="16px">';
+        return '<img src="' + window.location.protocol + '//www.google.com/s2/favicons?domain=' + url + '" width="16px" height="16px">';
     }
 
     private static format(str: string, args: any): string {
