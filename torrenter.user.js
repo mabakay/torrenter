@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.1.0
+// @version        2.2.0
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
 // @copyright      2010 - 2022, mabakay
-// @date           27 March 2022
+// @date           17 April 2022
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -64,7 +64,7 @@ var TorrenterConfigurator = /** @class */ (function () {
                     var userEnginesFiled = document.getElementById('mabakay_Torrenter_field_userEngines');
                     userEnginesFiled.setAttribute('cols', '80');
                     userEnginesFiled.setAttribute('rows', '10');
-                    userEnginesFiled.setAttribute('placeholder', _this.localization.eg + ' https://search-site.com/?title={title}&year={year}&orderby=seeds');
+                    userEnginesFiled.setAttribute('placeholder', _this.localization.eg + ' https://search-site.com/?title={title}&year={year}&orderby=seeds[&imdbTag={imdb}]');
                     var enginesFieldDescription = document.createElement("div");
                     enginesFieldDescription.setAttribute('style', 'font-size: 12px;margin: 5px 6px;color: gray;');
                     enginesFieldDescription.innerHTML = _this.localization.addEngineDescription;
@@ -76,7 +76,7 @@ var TorrenterConfigurator = /** @class */ (function () {
                     closeButton.textContent = _this.localization.closeCaptionButton;
                     var restToDefaultsLink = document.getElementById('mabakay_Torrenter_resetLink');
                     restToDefaultsLink.textContent = _this.localization.resetLinkCaption;
-                    GM_config.frame.setAttribute('style', 'inset: 166px auto auto 326px;border: 1px solid rgb(0, 0, 0);height: 410px;margin: 0px;opacity: 1;overflow: auto;padding: 0px;position: fixed;width: 650px;z-index: 9999;display: block;');
+                    GM_config.frame.setAttribute('style', 'inset: 166px auto auto 326px;border: 1px solid rgb(0, 0, 0);height: 440px;margin: 0px;opacity: 1;overflow: auto;padding: 0px;position: fixed;width: 650px;z-index: 9999;display: block;');
                 },
                 'save': function () {
                     GM_config.close();
@@ -120,12 +120,12 @@ var TorrenterConfigurator = /** @class */ (function () {
         return {
             engines: [
                 "https://thepiratebay10.org/search/{title} {year}/0/7/0",
-                "https://rarbg.to/torrents.php?search={title} {year}&order=seeders&by=DESC",
+                "https://rarbg.to/torrents.php?search={title} {year}&order=seeders&by=DESC[&imdb={imdb}]",
                 "https://1337x.to/sort-search/{title} {year}/seeders/desc/1/",
                 "https://torrentz2eu.org/index.html?q={title} {year}",
                 "https://yts.mx/browse-movies/{title}/all/all/0/seeds/{year}/all",
                 "https://eztv.re/search/{title} {year}",
-                "https://zooqle.com/search?q={title} {year}&s=ns&v=t&sd=d",
+                "https://www.torlock.com/?q={title} {year}&sort=seeds&order=desc",
                 "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title} {year}",
                 "https://www.limetorrents.pro/search/all/{title} {year}/seeds/1/"
             ],
@@ -144,7 +144,7 @@ var TorrenterConfigurator = /** @class */ (function () {
             showUserEnginesFirst: 'Show User Definied Engines First',
             userEngines: 'User Engines',
             eg: 'e.g.',
-            addEngineDescription: 'Type by separating with an enter. Available variables are:</br>&emsp;{title} - movie title</br>&emsp;{year} - movie release year',
+            addEngineDescription: 'Type by separating with an enter. Available variables are:</br>&emsp;{title} - movie title</br>&emsp;{year} - movie release year</br>&emsp;{imdb} - position ID in www.imdb.com</br>&emsp;[] - optional fragment, removed if the internal tag is not found by the site processor',
             saveButtonCaption: 'Save',
             closeCaptionButton: 'Close',
             resetLinkCaption: 'Reset to defaults',
@@ -157,7 +157,7 @@ var TorrenterConfigurator = /** @class */ (function () {
             showUserEnginesFirst: 'Pokaż wyszukiwarki użytkownika jako pierwsze',
             userEngines: 'Wyszukiwarki użytkownika',
             eg: 'np.',
-            addEngineDescription: 'Podaj rozdzielając enterem. Dostępne zmienne to:</br>&emsp;{title} - tytuł filmu</br>&emsp;{year} - rok wydania filmu',
+            addEngineDescription: 'Podaj rozdzielając enterem. Dostępne zmienne to:</br>&emsp;{title} - tytuł filmu</br>&emsp;{year} - rok wydania filmu</br>&emsp;{imdb} - ID pozycji w serwisie www.imdb.com</br>&emsp;[] - fragment opcjonalny usuwany jeżeli wewnętrzny tag nie zostanie odnaleziony przez parser strony',
             saveButtonCaption: 'Zapisz',
             closeCaptionButton: 'Anuluj',
             resetLinkCaption: 'Przywróć ustawienia domyślne',
@@ -177,7 +177,7 @@ var Torrenter = /** @class */ (function () {
                 torrenterElements[i].remove();
             }
         }
-        setTimeout(function () { siteProcessor(function (tag, title, year, style, itemStyle) { return _this.createLinkSpan(config, tag, title, year, style, itemStyle); }); }, 250);
+        setTimeout(function () { siteProcessor(function (tag, style, itemStyle, args) { return _this.createLinkSpan(config, tag, style, itemStyle, args); }); }, 250);
     };
     Torrenter.getSiteProcessor = function (hostName) {
         switch (hostName) {
@@ -191,7 +191,7 @@ var Torrenter = /** @class */ (function () {
                 return Torrenter.processRottenTomatoes;
         }
     };
-    Torrenter.prototype.createLinkSpan = function (config, tag, title, year, style, itemStyle) {
+    Torrenter.prototype.createLinkSpan = function (config, tag, style, itemStyle, args) {
         var span = document.createElement(tag);
         span.setAttribute("style", style);
         span.classList.add("torrenter");
@@ -212,7 +212,7 @@ var Torrenter = /** @class */ (function () {
         }
         for (var i = 0; i < engines.length; i++) {
             var link = document.createElement("a");
-            link.setAttribute("href", Torrenter.format(engines[i], { title: encodeURIComponent(title), year: year }));
+            link.setAttribute("href", Torrenter.format(engines[i], args));
             if (itemStyle) {
                 link.setAttribute("style", itemStyle);
             }
@@ -230,10 +230,17 @@ var Torrenter = /** @class */ (function () {
         return span;
     };
     Torrenter.getFavIconImg = function (url) {
-        return '<img src="http://www.google.com/s2/favicons?domain=' + url + '" width="16px" height="16px">';
+        return '<img src="' + window.location.protocol + '//www.google.com/s2/favicons?domain=' + url + '" width="16px" height="16px">';
     };
     Torrenter.format = function (str, args) {
-        return str.replace(/{(\w+)}/g, function (placeholderWithDelimiters, placeholderWithoutDelimiters) { return args.hasOwnProperty(placeholderWithoutDelimiters) ? args[placeholderWithoutDelimiters] : placeholderWithDelimiters; });
+        return str.replace(/(?:\[[^{}]*?)?{(\w+)}(?:[^{}]*?\])?/g, function (text, placeholder) {
+            if (text[0] == "[" && text[text.length - 1] == "]") {
+                return args.hasOwnProperty(placeholder) ? text.substring(1, text.length - 1).replace("{" + placeholder + "}", encodeURIComponent(args[placeholder])) : "";
+            }
+            else {
+                return args.hasOwnProperty(placeholder) ? encodeURIComponent(args[placeholder]) : text;
+            }
+        });
     };
     Torrenter.processRelease24 = function (createLinkSpan) {
         var titleElement = document.getElementById("mainwindow");
@@ -245,11 +252,8 @@ var Torrenter = /** @class */ (function () {
                 var match = elem.children[0].children[0].innerHTML.match(title_regex);
                 if (match != null) {
                     var title = match[1];
-                    var titleYear = void 0;
-                    if (match.length === 4 && match[3]) {
-                        titleYear = match[3];
-                    }
-                    var span = createLinkSpan("span", title, titleYear, "margin-left: 1em; font-weight: normal;", "position: relative; top: 5px;");
+                    var year = match.length === 4 && match[3] ? match[3] : null;
+                    var span = createLinkSpan("span", "margin-left: 1em; font-weight: normal;", "position: relative; top: 5px;", { title: title, year: year });
                     elem.children[2].children[0].children[0].children[0].children[0].children[1].children[0].children[0].children[0].appendChild(span);
                 }
             }
@@ -258,7 +262,7 @@ var Torrenter = /** @class */ (function () {
     Torrenter.processFilmweb = function (createLinkSpan) {
         var titleElement = document.querySelector(".fP__title");
         var title;
-        var titleYear;
+        var year;
         if (titleElement) {
             var smallTitleElement = document.querySelector(".fP__originalTitle");
             if (smallTitleElement) {
@@ -267,26 +271,24 @@ var Torrenter = /** @class */ (function () {
             else {
                 title = titleElement.textContent;
             }
-            var year = document.querySelector(".fP__year").textContent;
             var yearRegexp = /([0-9]{4})/;
-            var match = year.match(yearRegexp);
+            var match = document.querySelector(".fP__year").textContent.match(yearRegexp);
             if (match != null) {
-                titleYear = match[1];
+                year = match[1];
             }
         }
         var headerElement = document.querySelector('.fP__titleDetails');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, titleYear, "display: inline-flex;", "position: relative; top: 2px; z-index: 1;"));
+            headerElement.appendChild(createLinkSpan("span", "display: inline-flex;", "position: relative; top: 2px; z-index: 1;", { title: title, year: year }));
         }
     };
     Torrenter.processImdb = function (createLinkSpan) {
         var titleElement = document.querySelector('[data-testid*="block__title"]');
         var title;
-        var titleYear;
+        var year;
         if (titleElement) {
             var smallTitleElement = document.querySelector('[data-testid*="original-title"]');
             if (smallTitleElement) {
-                titleElement = smallTitleElement;
                 title = smallTitleElement.childNodes[0].nodeValue;
                 // Remove "Original title" prefix
                 var titleRegexp = /Original title: (.*)|.*/;
@@ -300,35 +302,35 @@ var Torrenter = /** @class */ (function () {
             }
             var yearElement = document.querySelector('[class*="ipc-inline-list__item"] span');
             if (yearElement) {
-                var year = yearElement.textContent;
                 var yearRegexp = /([0-9]{4})/;
-                var match = year.match(yearRegexp);
+                var match = yearElement.textContent.match(yearRegexp);
                 if (match != null) {
-                    titleYear = match[1];
+                    year = match[1];
                 }
             }
         }
         var headerElement = document.querySelector('[data-testid*="block__metadata"]');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em; display: inline-block;"));
+            var match = window.location.pathname.match(/\/(tt.*?)(?:\/|\?|$)/i);
+            var imdb = match != null ? match[1] : null;
+            headerElement.appendChild(createLinkSpan("span", "margin-left: 1em; display: inline-block;", null, { title: title, year: year, imdb: imdb }));
         }
     };
     Torrenter.processRottenTomatoes = function (createLinkSpan) {
         var titleElement = document.querySelector(".scoreboard__title");
         var title;
-        var titleYear;
+        var year;
         if (titleElement) {
             title = titleElement.textContent;
-            var year = document.querySelector(".scoreboard__info").textContent;
             var yearRegexp = /([0-9]{4})/;
-            var match = year.match(yearRegexp);
+            var match = document.querySelector(".scoreboard__info").textContent.match(yearRegexp);
             if (match != null) {
-                titleYear = match[1];
+                year = match[1];
             }
         }
         var headerElement = document.querySelector('.scoreboard__title');
         if (headerElement && title) {
-            headerElement.appendChild(createLinkSpan("span", title, titleYear, "margin-left: 1em;font-size: 0.5em;position: relative;top: -7px;", "position: relative; top: 2px;"));
+            headerElement.appendChild(createLinkSpan("span", "margin-left: 1em;font-size: 0.5em;position: relative;top: -7px;", "position: relative; top: 2px;", { title: title, year: year }));
         }
     };
     return Torrenter;
