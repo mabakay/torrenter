@@ -340,15 +340,15 @@ class Torrenter {
     }
 
     private static processImdb(createLinkSpan: CreateLinkSpanFunction): void {
-        let titleElement = document.querySelector('[data-testid*="block__title"]')
+        let titleElement = document.querySelector('[data-testid*="hero__pageTitle"]')
         let title;
         let year;
 
         if (titleElement) {
-            let smallTitleElement = document.querySelector('[data-testid*="original-title"]')
+            let smallTitleElement = titleElement.nextElementSibling;
 
-            if (smallTitleElement) {
-                title = smallTitleElement.childNodes[0].nodeValue;
+            if (smallTitleElement && smallTitleElement.textContent && smallTitleElement.textContent.indexOf("Original title:") > -1) {
+                title = smallTitleElement.textContent;
 
                 // Remove "Original title" prefix
                 let titleRegexp = /Original title: (.*)|.*/;
@@ -358,10 +358,10 @@ class Torrenter {
                     title = titleMatch[1];
                 }
             } else {
-                title = titleElement.childNodes[0].nodeValue;
+                title = titleElement.textContent;
             }
 
-            let yearElement = document.querySelector('[class*="ipc-inline-list__item"] span')
+            let yearElement = document.querySelector('[data-testid*="hero__pageTitle"] ~ ul > li');
             if (yearElement) {
                 let yearRegexp = /([0-9]{4})/;
                 let match = yearElement.textContent.match(yearRegexp);
@@ -372,7 +372,7 @@ class Torrenter {
             }
         }
 
-        let headerElement = document.querySelector('[data-testid*="block__metadata"]')
+        let headerElement = document.querySelector('[data-testid*="hero__pageTitle"] ~ ul');
         if (headerElement && title) {
             let match = window.location.pathname.match(/\/(tt.*?)(?:\/|\?|$)/i);
             let imdb = match != null ? match[1] : null;
