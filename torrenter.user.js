@@ -28,6 +28,35 @@
 // ==/UserScript==
 "use strict";
 class TorrenterConfigurator {
+    get localization() {
+        var _a;
+        return (_a = TorrenterConfigurator._localization[this._language]) !== null && _a !== void 0 ? _a : TorrenterConfigurator._localization["en"];
+    }
+    getConfigurationProperty(name, defaultValue) {
+        return GM_config.get(name, defaultValue);
+    }
+    static getLanguage() {
+        return window.navigator.language.split(/-|_/)[0].toLowerCase();
+    }
+    getConfiguration() {
+        return {
+            engines: [
+                "https://thepiratebay10.org/search/{title}[ {year}]/0/7/0",
+                "https://rarbg.to/torrents.php?search={title}[ {year}]&order=seeders&by=DESC[&imdb={imdb}]",
+                "https://1337x.to/sort-search/{title}[ {year}]/seeders/desc/1/",
+                "https://torrentz2eu.org/index.html?q={title}[ {year}]",
+                "https://yts.mx/browse-movies/{title}[/all/all/0/seeds/{year}/all]",
+                "https://eztv.re/search/{title}[ {year}]",
+                "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
+                "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title}[ {year}]",
+                "https://www.limetorrents.pro/search/all/{title}[ {year}]/seeds/1/"
+            ],
+            showEngines: this.getConfigurationProperty("showEngines", true),
+            showUserEngines: this.getConfigurationProperty("showUserEngines", false),
+            showUserEnginesFirst: this.getConfigurationProperty("showUserEnginesFirst", false),
+            userEngines: this.getConfigurationProperty("userEngines", "").split(/\r?\n/).filter((item) => { return !!item; }),
+        };
+    }
     constructor(language, changeCallback) {
         this._language = language;
         if (!GM_config || !GM_registerMenuCommand) {
@@ -87,48 +116,6 @@ class TorrenterConfigurator {
         };
         GM_config.init(gmConfiguration);
         GM_registerMenuCommand(this.localization.configureMenuItem, () => { GM_config.open(); });
-    }
-    get localization() {
-        if (!TorrenterConfigurator._localization.hasOwnProperty(this._language)) {
-            return TorrenterConfigurator._localization["en"];
-        }
-        return TorrenterConfigurator._localization[this._language];
-    }
-    getConfigurationProperty(name, defaultValue) {
-        var _a;
-        try {
-            return (_a = GM_config.get(name)) !== null && _a !== void 0 ? _a : defaultValue;
-        }
-        catch (_b) {
-            return defaultValue;
-        }
-    }
-    static getLanguage() {
-        let lang = (window.navigator.languages ? window.navigator.languages[0] : window.navigator.language).toLowerCase();
-        if (lang.indexOf("-") !== -1)
-            lang = lang.split("-")[0];
-        if (lang.indexOf("_") !== -1)
-            lang = lang.split("_")[0];
-        return lang;
-    }
-    getConfiguration() {
-        return {
-            engines: [
-                "https://thepiratebay10.org/search/{title}[ {year}]/0/7/0",
-                "https://rarbg.to/torrents.php?search={title}[ {year}]&order=seeders&by=DESC[&imdb={imdb}]",
-                "https://1337x.to/sort-search/{title}[ {year}]/seeders/desc/1/",
-                "https://torrentz2eu.org/index.html?q={title}[ {year}]",
-                "https://yts.mx/browse-movies/{title}[/all/all/0/seeds/{year}/all]",
-                "https://eztv.re/search/{title}[ {year}]",
-                "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
-                "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title}[ {year}]",
-                "https://www.limetorrents.pro/search/all/{title}[ {year}]/seeds/1/"
-            ],
-            showEngines: this.getConfigurationProperty("showEngines", true),
-            showUserEngines: this.getConfigurationProperty("showUserEngines", false),
-            showUserEnginesFirst: this.getConfigurationProperty("showUserEnginesFirst", false),
-            userEngines: this.getConfigurationProperty("userEngines", "").split(/\r?\n/).filter((item) => { return !!item; }),
-        };
     }
     ;
 }

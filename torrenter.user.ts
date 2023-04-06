@@ -37,14 +37,37 @@ declare let GM_config: {
 
 declare let GM_registerMenuCommand: Function;
 
-type CreateLinkSpanFunction = (tag: string, style: string, itemStyle: string, args: Object) => HTMLElement;
+type CreateLinkSpanFunction = (tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }) => HTMLElement;
 type SiteProcessFunction = (createLinkSpan: CreateLinkSpanFunction) => void;
 
 "use strict";
+
+interface LocalizationConfiguration {
+    settingsTitle: string;
+    showBuildInEngines: string;
+    showUserEngines: string;
+    showUserEnginesFirst: string;
+    userEngines: string;
+    eg: string;
+    addEngineDescription: string;
+    saveButtonCaption: string;
+    closeCaptionButton: string;
+    resetLinkCaption: string;
+    configureMenuItem: string;
+}
+
+interface TorrenterConfiguration {
+    engines: string[];
+    showEngines: boolean;
+    showUserEngines: boolean;
+    showUserEnginesFirst: boolean;
+    userEngines: string[];
+  }
+
 class TorrenterConfigurator {
     private _language: string;
 
-    private static readonly _localization: Object = {
+    private static readonly _localization: Record<string, LocalizationConfiguration> = {
         en: {
             settingsTitle: "Torrenter Script Settings",
             showBuildInEngines: "Show Build-in Engines",
@@ -73,35 +96,19 @@ class TorrenterConfigurator {
         }
     }
 
-    private get localization(): any {
-        if (!TorrenterConfigurator._localization.hasOwnProperty(this._language)) {
-            return TorrenterConfigurator._localization["en"];
-        }
-
-        return TorrenterConfigurator._localization[this._language];
+    private get localization(): LocalizationConfiguration {
+        return TorrenterConfigurator._localization[this._language] ?? TorrenterConfigurator._localization["en"];
     }
 
     private getConfigurationProperty(name: string, defaultValue?: any) {
-        try {
-            return GM_config.get(name) ?? defaultValue;
-        } catch {
-            return defaultValue;
-        }
+        return GM_config.get(name, defaultValue);
     }
 
     static getLanguage(): string {
-        let lang = (window.navigator.languages ? window.navigator.languages[0] : window.navigator.language).toLowerCase();
-
-        if (lang.indexOf("-") !== -1)
-            lang = lang.split("-")[0];
-
-        if (lang.indexOf("_") !== -1)
-            lang = lang.split("_")[0];
-
-        return lang;
+        return window.navigator.language.split(/-|_/)[0].toLowerCase();
     }
 
-    getConfiguration(): any {
+    getConfiguration(): TorrenterConfiguration {
         return {
             engines: [
                 "https://thepiratebay10.org/search/{title}[ {year}]/0/7/0",
@@ -117,7 +124,7 @@ class TorrenterConfigurator {
             showEngines: this.getConfigurationProperty("showEngines", true),
             showUserEngines: this.getConfigurationProperty("showUserEngines", false),
             showUserEnginesFirst: this.getConfigurationProperty("showUserEnginesFirst", false),
-            userEngines: this.getConfigurationProperty("userEngines", "").split(/\r?\n/).filter((item: any) => { return !!item; }),
+            userEngines: this.getConfigurationProperty("userEngines", "").split(/\r?\n/).filter((item: string) => { return !!item; }),
         };
     }
 
@@ -194,7 +201,7 @@ class TorrenterConfigurator {
 }
 
 class Torrenter {
-    apply(config: Object, siteProcessor: SiteProcessFunction): void {
+    apply(config: TorrenterConfiguration, siteProcessor: SiteProcessFunction): void {
         let torrenterElements = document.getElementsByClassName("torrenter");
         if (torrenterElements && torrenterElements.length > 0) {
             for (let i = torrenterElements.length - 1; i >= 0; i--) {
@@ -202,7 +209,7 @@ class Torrenter {
             }
         }
 
-        setTimeout(() => { siteProcessor((tag: string, style: string, itemStyle: string, args: Object) => { return this.createLinkSpan(config, tag, style, itemStyle, args); }); }, 250);
+        setTimeout(() => { siteProcessor((tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }) => { return this.createLinkSpan(config, tag, style, itemStyle, args); }); }, 250);
     }
 
     static getSiteProcessor(hostName: string): SiteProcessFunction {
@@ -221,12 +228,12 @@ class Torrenter {
         }
     }
 
-    createLinkSpan(config: any, tag: string, style: string, itemStyle: string, args: Object): HTMLElement {
+    createLinkSpan(config: TorrenterConfiguration, tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }): HTMLElement {
         let span = document.createElement(tag);
         span.setAttribute("style", style);
         span.classList.add("torrenter");
 
-        let engines = [];
+        let engines: string[] = [];
 
         if (config.showEngines && config.showUserEngines) {
             if (config.showUserEnginesFirst) {
@@ -403,7 +410,7 @@ let config = configurator.getConfiguration();
 let hostName = window.location.hostname;
 let siteProcessor = Torrenter.getSiteProcessor(hostName);
 
-let applyFunction = (config: any) => {
+let applyFunction = (config: TorrenterConfiguration) => {
     if (siteProcessor) {
         let torrenter = new Torrenter();
         torrenter.apply(config, siteProcessor);
