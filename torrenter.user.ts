@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.2.3
+// @version        2.3.0
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
@@ -128,7 +128,7 @@ class TorrenterConfigurator {
         };
     }
 
-    constructor(language: string, changeCallback?: CallableFunction) {
+    constructor(language: string, changeCallback?: CallableFunction, onInitCallback?: CallableFunction) {
         this._language = language;
 
         if (!GM_config || !GM_registerMenuCommand) {
@@ -161,6 +161,7 @@ class TorrenterConfigurator {
                 }
             },
             "events": {
+                "init": onInitCallback,
                 "open": (document: Document, window: Window, frame: any) => {
                     let userEnginesFiled = document.getElementById("mabakay_Torrenter_field_userEngines");
                     userEnginesFiled.setAttribute("cols", "80");
@@ -404,9 +405,6 @@ class Torrenter {
     }
 }
 
-let configurator = new TorrenterConfigurator(TorrenterConfigurator.getLanguage(), () => { applyFunction(configurator.getConfiguration()); });
-let config = configurator.getConfiguration();
-
 let hostName = window.location.hostname;
 let siteProcessor = Torrenter.getSiteProcessor(hostName);
 
@@ -417,4 +415,4 @@ let applyFunction = (config: TorrenterConfiguration) => {
     }
 };
 
-applyFunction(config);
+let configurator = new TorrenterConfigurator(TorrenterConfigurator.getLanguage(), () => applyFunction(configurator.getConfiguration()), () => applyFunction(configurator.getConfiguration()));
