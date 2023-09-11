@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.2.2
+// @version        2.2.3
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
 // @copyright      2010 - 2023, mabakay
-// @date           06 Apr 2023
+// @date           11 Sep 2023
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -197,7 +197,7 @@ class TorrenterConfigurator {
 
         GM_config.init(gmConfiguration);
         GM_registerMenuCommand(this.localization.configureMenuItem, () => { GM_config.open(); });
-    };
+    }
 }
 
 class Torrenter {
@@ -382,7 +382,7 @@ class Torrenter {
     }
 
     private static processRottenTomatoes(createLinkSpan: CreateLinkSpanFunction): void {
-        let titleElement = document.querySelector(".scoreboard__title");
+        let titleElement = document.querySelector("score-board .title");
         let title;
         let year;
 
@@ -390,14 +390,14 @@ class Torrenter {
             title = titleElement.textContent;
 
             let yearRegexp = /([0-9]{4})/;
-            let match = document.querySelector(".scoreboard__info").textContent.match(yearRegexp);
+            let match = document.querySelector("score-board .info").textContent.match(yearRegexp);
 
             if (match != null) {
                 year = match[1];
             }
         }
 
-        let headerElement = document.querySelector(".scoreboard__title");
+        let headerElement = document.querySelector("score-board .title");
         if (headerElement && title) {
             headerElement.appendChild(createLinkSpan("span", "margin-left: 1em;font-size: 0.5em;position: relative;top: -7px;", "position: relative; top: 2px;", { title, year }));
         }
