@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.1
+// @version        2.3.2
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
@@ -42,14 +42,14 @@ class TorrenterConfigurator {
         return {
             engines: [
                 "https://thepiratebay10.org/search/{title}[ {year}]/0/7/0",
-                "https://rarbg.to/torrents.php?search={title}[ {year}]&order=seeders&by=DESC[&imdb={imdb}]",
+                "https://torrentgalaxy.to/torrents.php?search={title}[ {year}]&sort=seeders&order=desc",
                 "https://1337x.to/sort-search/{title}[ {year}]/seeders/desc/1/",
                 "https://torrentz2eu.org/index.html?q={title}[ {year}]",
                 "https://yts.mx/browse-movies/{title}[/all/all/0/seeds/{year}/all]",
                 "https://eztv.re/search/{title}[ {year}]",
                 "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
                 "https://www.torrentdownloads.me/search/?new=1&s_cat=0&search={title}[ {year}]",
-                "https://www.limetorrents.pro/search/all/{title}[ {year}]/seeds/1/"
+                "https://www.limetorrents.lol/search/all/{title}[ {year}]/seeds/1/"
             ],
             showEngines: this.getConfigurationProperty("showEngines", true),
             showUserEngines: this.getConfigurationProperty("showUserEngines", false),
