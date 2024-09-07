@@ -35,9 +35,6 @@ class TorrenterConfigurator {
     getConfigurationProperty(name, defaultValue) {
         return GM_config.get(name, defaultValue);
     }
-    static getLanguage() {
-        return window.navigator.language.split(/-|_/)[0].toLowerCase();
-    }
     getConfiguration() {
         return {
             engines: [
@@ -57,8 +54,11 @@ class TorrenterConfigurator {
             userEngines: this.getConfigurationProperty("userEngines", "").split(/\r?\n/).filter((item) => { return !!item; }),
         };
     }
-    constructor(language, changeCallback, onInitCallback) {
-        this._language = language;
+    constructor(changeCallback, onInitCallback) {
+        let languages = window.navigator.languages.map(item => item.replace('-', '_'));
+        this._language = languages.find(lang => TorrenterConfigurator._localization[lang])
+            || languages.find(lang => TorrenterConfigurator._localization[lang.split(/-|_/)[0]])
+            || 'en';
         if (!GM_config || !GM_registerMenuCommand) {
             return;
         }
@@ -320,4 +320,4 @@ let applyFunction = (config) => {
         torrenter.apply(config, siteProcessor);
     }
 };
-let configurator = new TorrenterConfigurator(TorrenterConfigurator.getLanguage(), () => applyFunction(configurator.getConfiguration()), () => applyFunction(configurator.getConfiguration()));
+let configurator = new TorrenterConfigurator(() => applyFunction(configurator.getConfiguration()), () => applyFunction(configurator.getConfiguration()));
