@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.4
+// @version        2.3.5
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
 // @copyright      2010 - 2024, mabakay
-// @date           18 Aug 2024
+// @date           07 Sep 2024
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -145,6 +145,32 @@ TorrenterConfigurator._localization = {
         closeCaptionButton: "Anuluj",
         resetLinkCaption: "Przywróć ustawienia domyślne",
         configureMenuItem: "Skonfiguruj"
+    },
+    pt_PT: {
+        settingsTitle: "Definições do script Torrenter",
+        showBuildInEngines: "Mostrar motores de pesquisa incorporados",
+        showUserEngines: "Mostrar motores de pesquisa definidos pelo utilizador",
+        showUserEnginesFirst: "Mostrar primeiro os motores de pesquisa definidos pelo utilizador",
+        userEngines: "Motores de pesquisa do utilizador",
+        eg: "p. ex.",
+        addEngineDescription: "Digite separando com um enter. As variáveis disponíveis são:</br>&emsp;{title} - título do filme</br>&emsp;{year} - ano de lançamento do filme</br>&emsp;{imdb} - ID da posição em www.imdb.com</br>&emsp;[] - fragmento opcional, removido se a etiqueta interna não for encontrada pelo processador do site",
+        saveButtonCaption: "Guardar",
+        closeCaptionButton: "Fechar",
+        resetLinkCaption: "Repor as predefinições",
+        configureMenuItem: "Definições"
+    },
+    pt_BR: {
+        settingsTitle: "Configurações do script Torrenter",
+        showBuildInEngines: "Mostrar mecanismos de busca incorporados",
+        showUserEngines: "Mostrar mecanismos de busca definidos pelo usuário",
+        showUserEnginesFirst: "Mostrar primeiro os mecanismos de busca definidos pelo usuário",
+        userEngines: "Mecanismos de busca do usuário",
+        eg: "p. ex.",
+        addEngineDescription: "Digite separando com um enter. As variáveis disponíveis são:</br>&emsp;{title} - título do filme</br>&emsp;{year} - ano de lançamento do filme</br>&emsp;{imdb} - ID da posição em www.imdb.com</br>&emsp;[] - fragmento opcional, removido se a tag interna não for encontrada pelo processador do site",
+        saveButtonCaption: "Salvar",
+        closeCaptionButton: "Fechar",
+        resetLinkCaption: "Redefinir para os padrões",
+        configureMenuItem: "Configurações"
     }
 };
 class Torrenter {
