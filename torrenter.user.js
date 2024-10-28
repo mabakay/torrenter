@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.5
+// @version        2.3.6
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
 // @copyright      2010 - 2024, mabakay
-// @date           07 Sep 2024
+// @date           28 Oct 2024
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -321,18 +321,18 @@ class Torrenter {
         }
     }
     static processRottenTomatoes(createLinkSpan) {
-        let titleElement = document.querySelector("[slot=titleIntro] span");
+        let titleElement = document.querySelector("media-hero rt-text[slot=title]");
         let title;
         let year;
         if (titleElement) {
             title = titleElement.textContent;
             let yearRegexp = /([0-9]{4})/;
-            let match = document.querySelector("[slot=releaseDate]").textContent.match(yearRegexp);
+            let match = document.querySelectorAll("media-hero rt-text[slot=metadataProp]")[1].textContent.match(yearRegexp);
             if (match != null) {
                 year = match[1];
             }
         }
-        let headerElement = document.querySelector("[slot=titleIntro] span");
+        let headerElement = document.querySelector("media-hero rt-text[slot=title]");
         if (headerElement && title) {
             headerElement.appendChild(createLinkSpan("span", "margin-left: 1em;font-size: 0.5em;position: relative;top: -7px;", "position: relative; top: 2px;", { title, year }));
         }
