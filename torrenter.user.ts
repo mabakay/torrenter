@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.6
+// @version        2.3.8
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
-// @copyright      2010 - 2024, mabakay
-// @date           28 Oct 2024
+// @copyright      2010 - 2026, mabakay
+// @date           20 Feb 2026
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -417,7 +417,7 @@ class Torrenter {
             title = titleElement.textContent;
 
             let yearRegexp = /([0-9]{4})/;
-            let match = document.querySelectorAll("media-hero rt-text[slot=metadataProp]")[1].textContent.match(yearRegexp);
+            let match = document.querySelectorAll("media-hero rt-text[slot=metadata-prop]")[1].textContent.match(yearRegexp);
 
             if (match != null) {
                 year = match[1];
