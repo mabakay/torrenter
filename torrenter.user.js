@@ -46,7 +46,8 @@ class TorrenterConfigurator {
                 "https://eztvx.to/search/{title}[ {year}]",
                 "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
                 "https://www.torrentdownloads.pro/search/?new=1&s_cat=0&search={title}[ {year}]",
-                "https://www.limetorrents.fun/search/all/{title}[ {year}]/seeds/1/"
+                "https://www.limetorrents.fun/search/all/{title}[ {year}]/seeds/1/",
+                "https://www.1tamilmv.cards/search/?q={title}[ {year}]"
             ],
             showEngines: this.getConfigurationProperty("showEngines", true),
             showUserEngines: this.getConfigurationProperty("showUserEngines", false),
