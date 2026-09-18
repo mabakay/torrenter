@@ -1,0 +1,24 @@
+{
+  "name": "torrenter",
+  "version": "1.0.0",
+  "description": "Adds links to torrent sites on popular movie websites.",
+  "main": "torrenter.user.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mabakay/torrenter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mabakay/torrenter/issues"
+  },
+  "homepage": "https://github.com/mabakay/torrenter#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
