@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.9
+// @version        2.4.0
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
@@ -134,11 +134,11 @@ class TorrenterConfigurator {
         return {
             engines: [
                 "https://thepiratebay.org/search/{title}[ {year}]/0/7/0",
-                "https://torrentgalaxy.hair/lmsearch?q={title}[ {year}]&category=lmsearch",
-                "https://1337x.to/sort-search/{title}[ {year}]/seeders/desc/1/",
+                "https://torrentgalaxy.one/get-posts/keywords:{title}[ {year}]",
+                "https://1337x.to/search/{title}[ {year}]/1/",
                 "https://www.torrentz.eu.com/index.html?q={title}[ {year}]",
                 "https://yts.bz/browse-movies/{title}[/all/all/0/seeds/{year}/all]",
-                "https://eztvx.to/search/{title}[ {year}]",
+                "https://eztv.yt/search/{title}[ {year}]",
                 "https://www.torlock.com/?q={title}[ {year}]&sort=seeds&order=desc",
                 "https://www.torrentdownloads.pro/search/?new=1&s_cat=0&search={title}[ {year}]",
                 "https://www.limetorrents.fun/search/all/{title}[ {year}]/seeds/1/"
