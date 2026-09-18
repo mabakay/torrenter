@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           Torrenter
 // @namespace      http://www.google.com/search?q=mabakay
-// @version        2.3.8
+// @version        2.3.9
 // @description    Adds links to torrent sites on popular movie websites.
 // @description:pl Dodaje linki do stron z torrentami na popularnych stronach o filmach.
 // @author         mabakay
 // @copyright      2010 - 2026, mabakay
-// @date           20 Feb 2026
+// @date           18 Sep 2026
 // @license        MIT
 // @run-at         document-end
 // @icon64URL      https://raw.githubusercontent.com/mabakay/torrenter/master/torrenter_64.png
@@ -37,7 +37,7 @@ declare let GM_config: {
 
 declare let GM_registerMenuCommand: Function;
 
-type CreateLinkSpanFunction = (tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }) => HTMLElement;
+type CreateLinkSpanFunction = (tag: string, style: string, itemStyle: string, args: { title: string, year?: string, imdb?: string }) => HTMLElement;
 type SiteProcessFunction = (createLinkSpan: CreateLinkSpanFunction) => void;
 
 "use strict";
@@ -62,7 +62,7 @@ interface TorrenterConfiguration {
     showUserEngines: boolean;
     showUserEnginesFirst: boolean;
     userEngines: string[];
-  }
+}
 
 class TorrenterConfigurator {
     private _language: string;
@@ -154,8 +154,8 @@ class TorrenterConfigurator {
         let languages = window.navigator.languages.map(item => item.replace('-', '_'));
 
         this._language = languages.find(lang => TorrenterConfigurator._localization[lang])
-                      || languages.find(lang => TorrenterConfigurator._localization[lang.split(/-|_/)[0]])
-                      || 'en';
+            || languages.find(lang => TorrenterConfigurator._localization[lang.split(/-|_/)[0]])
+            || 'en';
 
         if (!GM_config || !GM_registerMenuCommand) {
             return;
@@ -190,16 +190,20 @@ class TorrenterConfigurator {
                 "init": onInitCallback,
                 "open": (document: Document, window: Window, frame: any) => {
                     let userEnginesFiled = document.getElementById("mabakay_Torrenter_field_userEngines");
-                    userEnginesFiled.setAttribute("cols", "80");
-                    userEnginesFiled.setAttribute("rows", "10");
-                    userEnginesFiled.setAttribute("placeholder", this.localization.eg + " https://search-site.com/?title={title}&year={year}&orderby=seeds[&imdbTag={imdb}]");
+                    if (userEnginesFiled !== null) {
+                        userEnginesFiled.setAttribute("cols", "80");
+                        userEnginesFiled.setAttribute("rows", "10");
+                        userEnginesFiled.setAttribute("placeholder", this.localization.eg + " https://search-site.com/?title={title}&year={year}&orderby=seeds[&imdbTag={imdb}]");
+                    }
 
                     let enginesFieldDescription = document.createElement("div");
                     enginesFieldDescription.setAttribute("style", "font-size: 12px;margin: 5px 6px;color: gray;");
                     enginesFieldDescription.innerHTML = this.localization.addEngineDescription;
 
                     let enginesLabelField = document.getElementById("mabakay_Torrenter_userEngines_field_label");
-                    enginesLabelField.after(enginesFieldDescription);
+                    if (enginesLabelField !== null) {
+                        enginesLabelField.after(enginesFieldDescription);
+                    }
 
                     let saveButton = <Element>document.getElementById("mabakay_Torrenter_saveBtn");
                     saveButton.textContent = this.localization.saveButtonCaption;
@@ -236,10 +240,10 @@ class Torrenter {
             }
         }
 
-        setTimeout(() => { siteProcessor((tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }) => { return this.createLinkSpan(config, tag, style, itemStyle, args); }); }, 250);
+        setTimeout(() => { siteProcessor((tag: string, style: string, itemStyle: string, args: { title: string, year?: string, imdb?: string }) => { return this.createLinkSpan(config, tag, style, itemStyle, args); }); }, 250);
     }
 
-    static getSiteProcessor(hostName: string): SiteProcessFunction {
+    static getSiteProcessor(hostName: string): SiteProcessFunction | null {
         switch (hostName) {
             case "release24.pl":
                 return Torrenter.processRelease24;
@@ -253,9 +257,11 @@ class Torrenter {
             case "www.rottentomatoes.com":
                 return Torrenter.processRottenTomatoes;
         }
+
+        return null;
     }
 
-    createLinkSpan(config: TorrenterConfiguration, tag: string, style: string, itemStyle: string, args: { title: string, year: string, imdb?: string }): HTMLElement {
+    createLinkSpan(config: TorrenterConfiguration, tag: string, style: string, itemStyle: string, args: { title: string, year?: string, imdb?: string }): HTMLElement {
         let span = document.createElement(tag);
         span.setAttribute("style", style);
         span.classList.add("torrenter");
@@ -283,10 +289,12 @@ class Torrenter {
             }
 
             let urlRegex = /(https?:\/\/)(.+?)\//;
-            let regexResult = engines[i].match(urlRegex);
-            link.innerHTML = Torrenter.getFavIconImg(regexResult[2]);
 
-            link.setAttribute("title", regexResult[2]);
+            let regexResult = engines[i].match(urlRegex);
+            if (regexResult) {
+                link.innerHTML = Torrenter.getFavIconImg(regexResult[2]);
+                link.setAttribute("title", regexResult[2]);
+            }
 
             if (i > 0) {
                 let separator = document.createElement("span");
@@ -317,22 +325,24 @@ class Torrenter {
 
     private static processRelease24(createLinkSpan: CreateLinkSpanFunction): void {
         let titleElement = document.getElementById("mainwindow");
-        let loopCount = titleElement.childElementCount;
+        if (titleElement) {
+            let loopCount = titleElement.childElementCount;
 
-        for (let i = 1; i < loopCount; i++) {
-            let elem = titleElement.children[i];
+            for (let i = 1; i < loopCount; i++) {
+                let elem = titleElement.children[i];
 
-            if (elem.className === "wpis") {
-                let title_regex = /\"(.*)\"\s*(\(([0-9]{4})\))?/;
-                let match = elem.children[0].children[0].innerHTML.match(title_regex);
+                if (elem.className === "wpis") {
+                    let title_regex = /\"(.*)\"\s*(\(([0-9]{4})\))?/;
+                    let match = elem.children[0].children[0].innerHTML.match(title_regex);
 
-                if (match != null) {
-                    let title = match[1];
-                    let year = match.length === 4 && match[3] ? match[3] : null;
+                    if (match != null) {
+                        let title = match[1];
+                        let year = match.length === 4 && match[3] ? match[3] : undefined;
 
-                    let span = createLinkSpan("span", "margin-left: 1em; font-weight: normal;", "position: relative; top: 5px;", { title, year });
+                        let span = createLinkSpan("span", "margin-left: 1em; font-weight: normal;", "position: relative; top: 5px;", { title, year });
 
-                    elem.children[2].children[0].children[0].children[0].children[0].children[1].children[0].children[0].children[0].appendChild(span);
+                        elem.children[2].children[0].children[0].children[0].children[0].children[1].children[0].children[0].children[0].appendChild(span);
+                    }
                 }
             }
         }
@@ -340,23 +350,25 @@ class Torrenter {
 
     private static processFilmweb(createLinkSpan: CreateLinkSpanFunction): void {
         let titleElement = document.querySelector(".filmCoverSection__title");
-        let title;
-        let year;
+        let title: string | undefined;
+        let year: string | undefined;
 
         if (titleElement) {
             let smallTitleElement = document.querySelector(".filmCoverSection__originalTitle");
-
             if (smallTitleElement) {
-                title = smallTitleElement.textContent;
+                title = smallTitleElement.firstChild?.textContent?.trim() ?? titleElement.textContent?.trim() ?? undefined;
             } else {
-                title = titleElement.textContent;
+                title = titleElement.textContent?.trim() ?? undefined;
             }
 
-            let yearRegexp = /([0-9]{4})/;
-            let match = document.querySelector(".filmCoverSection__year").textContent.match(yearRegexp);
+            let yearElement = document.querySelector(".filmCoverSection__year");
+            if (yearElement) {
+                let yearRegexp = /([0-9]{4})/;
 
-            if (match != null) {
-                year = match[1];
+                let match = yearElement.textContent?.match(yearRegexp);
+                if (match != null) {
+                    year = match[1];
+                }
             }
         }
 
@@ -368,12 +380,11 @@ class Torrenter {
 
     private static processImdb(createLinkSpan: CreateLinkSpanFunction): void {
         let titleElement = document.querySelector('[data-testid*="hero__pageTitle"]')
-        let title;
-        let year;
+        let title: string | undefined;
+        let year: string | undefined;
 
         if (titleElement) {
             let smallTitleElement = titleElement.nextElementSibling;
-
             if (smallTitleElement && smallTitleElement.textContent && smallTitleElement.textContent.indexOf("Original title:") > -1) {
                 title = smallTitleElement.textContent;
 
@@ -402,16 +413,16 @@ class Torrenter {
         let headerElement = document.querySelector('[data-testid*="hero__pageTitle"] ~ ul');
         if (headerElement && title) {
             let match = window.location.pathname.match(/\/(tt.*?)(?:\/|\?|$)/i);
-            let imdb = match != null ? match[1] : null;
+            let imdb = match != null ? match[1] : undefined;
 
-            headerElement.appendChild(createLinkSpan("span", "margin-left: 1em; display: inline-block;", null, { title, year, imdb }));
+            headerElement.appendChild(createLinkSpan("span", "margin-left: 1em; display: inline-block;", '', { title, year, imdb }));
         }
     }
 
     private static processRottenTomatoes(createLinkSpan: CreateLinkSpanFunction): void {
         let titleElement = document.querySelector("media-hero rt-text[slot=title]");
-        let title;
-        let year;
+        let title: string | undefined;
+        let year: string | undefined;
 
         if (titleElement) {
             title = titleElement.textContent;
